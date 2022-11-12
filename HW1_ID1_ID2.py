@@ -11,7 +11,6 @@ class KnnClassifier:
     def __init__(self, k: int, p: float):
         """
         Constructor for the KnnClassifier.
-
         :param k: Number of nearest neighbors to use.
         :param p: p parameter for Minkowski distance calculation.
         """
@@ -25,7 +24,6 @@ class KnnClassifier:
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
         This method trains a k-NN classifier on a given training set X with label set y.
-
         :param X: A 2-dimensional numpy array of m rows and d columns. It is guaranteed that m >= 1 and d >= 1.
             Array datatype is guaranteed to be np.float32.
         :param y: A 1-dimensional numpy array of m rows. it is guaranteed to match X's rows in length (|m_x| == |m_y|).
@@ -41,7 +39,6 @@ class KnnClassifier:
         """
         This method predicts the y labels of a given dataset X, based on a previous training of the model.
         It is mandatory to call KnnClassifier.fit before calling this method.
-
         :param X: A 2-dimensional numpy array of m rows and d columns. It is guaranteed that m >= 1 and d >= 1.
             Array datatype is guaranteed to be np.float32.
         :return: A 1-dimensional numpy array of m rows. Should be of datatype np.uint8.
@@ -50,10 +47,10 @@ class KnnClassifier:
         y_test = list()
         for x in X:
             dist_matrix = list()
-            for i in self.X_train.shape[0]:
-                dist_matrix[i] = (np.linalg.norm(self.X_train[i] - x, ord=self.p), self.y_train[i])
+            for i in range(self.X_train.shape[0]):
+                dist_matrix.append((np.linalg.norm(self.X_train[i] - x, ord=self.p), self.y_train[i]))
             dist_np = np.array(dist_matrix)
-            indices = np.lexsort(dist_np[:, 1], dist_np[:, 0])
+            indices = np.lexsort((dist_np[:, 1], dist_np[:, 0]))
             freq = np.bincount(self.y_train[indices[:self.k]])
             most_common_label = list()
             most_occurrences = np.amax(freq)
