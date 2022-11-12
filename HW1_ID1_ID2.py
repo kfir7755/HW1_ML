@@ -47,7 +47,6 @@ class KnnClassifier:
         :return: A 1-dimensional numpy array of m rows. Should be of datatype np.uint8.
         """
 
-        # TODO - your code here
         y_test = list()
         for x in X:
             dist_matrix = list()
