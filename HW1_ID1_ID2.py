@@ -18,7 +18,6 @@ class KnnClassifier:
         self.y_train = None
         self.k = k
         self.p = p
-        self.L = None
         self.ids = (213272644, 325482768)
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
@@ -33,7 +32,6 @@ class KnnClassifier:
         # TODO - your code here
         self.X_train = X
         self.y_train = y
-        self.L = max(y) + 1
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -47,18 +45,26 @@ class KnnClassifier:
         y_test = list()
         for x in X:
             dist_matrix = list()
+            #for each observation in X_train, calculate the distance to x by using order p norm
+            #add the distance to the distance matrix
             for i in range(self.X_train.shape[0]):
                 dist_matrix.append((np.linalg.norm(self.X_train[i] - x, ord=self.p), self.y_train[i]))
             dist_np = np.array(dist_matrix)
+            # find the indices order for the sorted distance matrix. if the distance of 2 points is the same,
+            # sort by lexicographic order of the label
             indices = np.lexsort((dist_np[:, 1], dist_np[:, 0]))
+            # count appearances of each label in order to find the mode
             freq = np.bincount(self.y_train[indices[:self.k]])
             most_common_label = list()
             most_occurrences = np.amax(freq)
             for i in range(freq.shape[0]):
+                #if the label i has the same appearances as the mode, add to the modes list
                 if freq[i] == most_occurrences:
                     most_common_label.append(i)
+            #if there is more than one mode, choose by 1-NN (as the tiebreaker wanted)
             if len(most_common_label) > 1:
                 y_test.append(self.y_train[indices[0]])
+            #if there is only 1 mode, take it as the label for x
             else:
                 y_test.append(most_common_label[0])
         return np.array(y_test)
