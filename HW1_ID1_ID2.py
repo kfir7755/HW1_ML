@@ -45,8 +45,8 @@ class KnnClassifier:
         y_test = list()
         for x in X:
             dist_matrix = list()
-            #for each observation in X_train, calculate the distance to x by using order p norm
-            #add the distance to the distance matrix
+            # for each observation in X_train, calculate the distance to x by using order p norm
+            # add the distance to the distance matrix
             for i in range(self.X_train.shape[0]):
                 dist_matrix.append((np.linalg.norm(self.X_train[i] - x, ord=self.p), self.y_train[i]))
             dist_np = np.array(dist_matrix)
@@ -58,13 +58,17 @@ class KnnClassifier:
             most_common_label = list()
             most_occurrences = np.amax(freq)
             for i in range(freq.shape[0]):
-                #if the label i has the same appearances as the mode, add to the modes list
+                # if the label i has the same appearances as the mode, add to the modes list
                 if freq[i] == most_occurrences:
                     most_common_label.append(i)
-            #if there is more than one mode, choose by 1-NN (as the tiebreaker wanted)
+            # if there is more than one mode, choose by the label of the nearest neighbor with a common label
             if len(most_common_label) > 1:
-                y_test.append(self.y_train[indices[0]])
-            #if there is only 1 mode, take it as the label for x
+                k_labels_list = self.y_train[indices[:self.k]]
+                i = 0
+                while k_labels_list[i] not in most_common_label:
+                    i += 1
+                y_test.append(k_labels_list[i])
+            # if there is only 1 mode, take it as the label for x
             else:
                 y_test.append(most_common_label[0])
         return np.array(y_test)
